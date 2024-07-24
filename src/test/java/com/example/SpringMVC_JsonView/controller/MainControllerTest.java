@@ -62,7 +62,7 @@ public class MainControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].name").value("John"))
                 .andExpect(jsonPath("$[0].email").value("john@example.com"))
-                .andExpect(jsonPath("$[0].*", hasSize(2)));
+                .andExpect(jsonPath("$[0].*", hasSize(3)));
     }
 
     @Test
@@ -87,7 +87,7 @@ public class MainControllerTest {
                 .andExpect(jsonPath("$.orders", hasSize(1)))
                 .andExpect(jsonPath("$.orders[0].product").value("Laptop"))
                 .andExpect(jsonPath("$.orders[0].amount").value(1000.0))
-                .andExpect(jsonPath("$.*", hasSize(3)));
+                .andExpect(jsonPath("$.*", hasSize(4)));
 
     }
 

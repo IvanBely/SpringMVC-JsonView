@@ -18,13 +18,13 @@ import java.util.List;
 public class MainController {
     private final UserService userService;
     @GetMapping("/")
-    @JsonView(UserView.UserSummary.class)
+    @JsonView(UserView.Public.class)
     public ResponseEntity<List<User>> getAllUsers() {
         List<User> listUsers = userService.getAllUsers();
         return new ResponseEntity<>(listUsers, HttpStatus.OK);
     }
     @GetMapping("/{id}")
-    @JsonView(UserView.UserDetails.class)
+    @JsonView(UserView.Details.class)
     public ResponseEntity<User> getUserInfo(@PathVariable Long id) {
         User user = userService.getUser(id);
         return new ResponseEntity<>(user, HttpStatus.OK);
