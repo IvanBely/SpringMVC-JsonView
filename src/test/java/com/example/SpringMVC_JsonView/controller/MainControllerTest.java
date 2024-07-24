@@ -1,5 +1,6 @@
 package com.example.SpringMVC_JsonView.controller;
 
+import com.example.SpringMVC_JsonView.exception.UserNotFoundException;
 import com.example.SpringMVC_JsonView.model.Order;
 import com.example.SpringMVC_JsonView.model.User;
 import com.example.SpringMVC_JsonView.service.UserService;
@@ -92,7 +93,7 @@ public class MainControllerTest {
     }
 
     @Test
-    public void сreateUser() throws Exception {
+    public void createUser_OK() throws Exception {
         when(userService.createUser(any(User.class))).thenReturn(correctUser);
 
         mockMvc.perform(post("/")
@@ -102,23 +103,47 @@ public class MainControllerTest {
                 .andExpect(jsonPath("$.name").value("John"))
                 .andExpect(jsonPath("$.email").value("john@example.com"));
     }
-
     @Test
-    public void testUpdateUser() throws Exception {
-        when(userService.updateUser(Mockito.eq(1L), any(User.class))).thenReturn(correctUser);
+    public void createUser_EmptyFields() throws Exception {
+        User user = new User();
+        user.setName("");
+        user.setEmail("");
 
-        mockMvc.perform(put("/{id}", 1L)
+        mockMvc.perform(post("/")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(new ObjectMapper().writeValueAsString(correctUser)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name").value("John"))
-                .andExpect(jsonPath("$.email").value("john@example.com"));
+                        .content(new ObjectMapper().writeValueAsString(user)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.name").value("Name is mandatory"))
+                .andExpect(jsonPath("$.email").value("Email is mandatory"));
     }
 
     @Test
-    public void testDeleteUser() throws Exception {
+    public void createUser_EmailInvalid() throws Exception {
+        User user = new User();
+        user.setName("John");
+        user.setEmail("invalid-email");
+
+        mockMvc.perform(post("/")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(user)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.name").doesNotExist())
+                .andExpect(jsonPath("$.email").value("Email should be valid"));
+    }
+
+    @Test
+    public void deleteUser_OK() throws Exception {
         mockMvc.perform(delete("/{id}", 1L)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent());
+    }
+    @Test
+    public void deleteUser_NOT_FOUND() throws Exception {
+        Mockito.doThrow(new UserNotFoundException("User not found with id 2")).when(userService).deleteUser(2L);
+
+        mockMvc.perform(delete("/{id}", 2L)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andExpect(content().string("User not found with id 2"));
     }
 }

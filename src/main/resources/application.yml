@@ -15,5 +15,13 @@ spring:
 
 logging:
   level:
-    root: INFO
-    org.springframework.web: DEBUG
+    org:
+      springframework:
+        data:
+          jpa:
+            repository:
+              support:
+                JpaTransactionManager: DEBUG
+        orm:
+          jpa: DEBUG
+    org.hibernate: DEBUG

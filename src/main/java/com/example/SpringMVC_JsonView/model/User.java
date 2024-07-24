@@ -1,6 +1,7 @@
 package com.example.SpringMVC_JsonView.model;
 
-import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -21,12 +22,13 @@ public class User {
     @JsonView(UserView.Public.class)
     private String name;
 
-    @Email(message = "Email should be valid")
+    @Email(message = "Email should be valid", groups = {ValidationGroups.Create.class, ValidationGroups.Update.class})
     @NotBlank(message = "Email is mandatory", groups = ValidationGroups.Create.class)
     @JsonView(UserView.Public.class)
     private String email;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     @JsonView(UserView.Details.class)
     private List<Order> orders;
 }
