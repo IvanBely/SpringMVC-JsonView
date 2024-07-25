@@ -104,7 +104,7 @@ public class MainControllerTest {
                 .andExpect(jsonPath("$.email").value("john@example.com"));
     }
     @Test
-    public void createUser_EmptyFields() throws Exception {
+    public void createUser_EmptyFields_MethodArgumentNotValidException() throws Exception {
         User user = new User();
         user.setName("");
         user.setEmail("");
@@ -118,7 +118,7 @@ public class MainControllerTest {
     }
 
     @Test
-    public void createUser_EmailInvalid() throws Exception {
+    public void createUser_EmailInvalid_MethodArgumentNotValidException() throws Exception {
         User user = new User();
         user.setName("John");
         user.setEmail("invalid-email");
@@ -138,7 +138,7 @@ public class MainControllerTest {
                 .andExpect(status().isNoContent());
     }
     @Test
-    public void deleteUser_NOT_FOUND() throws Exception {
+    public void deleteUser_UserNotFoundException() throws Exception {
         Mockito.doThrow(new UserNotFoundException("User not found with id 2")).when(userService).deleteUser(2L);
 
         mockMvc.perform(delete("/{id}", 2L)
