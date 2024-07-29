@@ -15,7 +15,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-public class MainController {
+public class UserController {
     private final UserService userService;
     @GetMapping("/")
     @JsonView(UserView.Public.class)
